@@ -8,3 +8,4 @@ X = np.zeros((20, 20))
 x = np.random.randint(2, size=20)
 x = x * 2 - 1
 print(x)
+
