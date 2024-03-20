@@ -1,11 +1,16 @@
 import numpy as np
+import matploblib
 
+A = np.matrix([
+    [2, 0, 1],
+    [0, 1, 1],
+    [1, 3, 0],
+    [0, 1, 0],
+    [0, 1, 0]
+    ])
+b = np.array([1, 5, 3, 11, 8])
+prio = np.array([1, 1, 1])
 
-# min f(x) such that x is in a cone and rank(x) = §1
-# Create adjecency matrix
-A = np.random.randint(2, (20, 20))
-X = np.zeros((20, 20))
-x = np.random.randint(2, size=20)
-x = x * 2 - 1
-print(x)
+# minimize sum(a1)x1 / p1 such that:
+# A * x >= b
 
