@@ -1,55 +1,46 @@
-import numpy as np
-import plotly.graph_objects as go
+z = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [2, 3, 0, 5, 6, 7, 8, 9, 1],
+    [3, 4, 0, 6, 7, 8, 9, 1, 2],
+    [4, 5, 0, 7, 8, 9, 1, 2, 3],
+    [0, 6, 7, 8, 9, 1, 2, 3, 4],
+    [6, 7, 8, 9, 1, 2, 3, 4, 5],
+    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+    [9, 1, 2, 3, 4, 5, 6, 7, 8]
+]
+contains_0 = True
 
+while(contains_0):
+    zT = list(zip(*z))
+    x_z_combos = []
+    y_z_combos = []
+    for i in range(9):
+        for j in range(1, 10):
+            x_z_combos.append([i, j])
+            y_z_combos.append([i, j])
 
-# x = first dimension
-x = np.arange(0, 9)
-xr = np.arange(1, 10)
-# y = second dimension
-y = np.arange(0, 9)
-yr = np.arange(1, 10)
-# z = output value of shadow 4th dimension
-z = np.matrix([
-    [0, 0, 0, 8, 0, 0, 0, 0, 9],
-    [0, 1, 9, 0, 0, 5, 8, 3, 0],
-    [0, 4, 3, 0, 1, 0, 0, 0, 7],
-    [4, 0, 0, 1, 5, 0, 0, 0, 3],
-    [0, 0, 2, 7, 0, 4, 0, 1, 0],
-    [0, 8, 0, 0, 9, 0, 6, 0, 0],
-    [0, 7, 0, 0, 0, 6, 3, 0, 0],
-    [0, 3, 0, 0, 7, 0, 0, 8, 0],
-    [9, 0, 4, 5, 0, 0, 0, 0, 1],
-])
-# f = fourth dimension
-f = np.arange(0, 9)
+    for i in range(9):
+        for j in z[i]:
+            if j != 0:
+                x_z_combos.remove([i, j])
 
-zsol = [[[np.arange(1, 10)] for _ in range(9)] for _ in range(9)]
+    for i in range(9):
+        for j in zT[i]:
+            if j != 0:
+                y_z_combos.remove([i, j])
 
-gO = go.Surface(x=xr, y=yr, z=z)
-fig = go.Figure(data=[gO])
+    for p in x_z_combos:
+        for q in y_z_combos:
+            if p[1] == q[1]:
+                z[p[0]][q[0]] = q[1]
 
-# fig.show()
+    has0 = False
+    for i in range(9):
+        for j in range(9):
+            if z[i][j] == 0:
+                has0 = True
+    contains_0 = has0
 
-# Lets create polynomial solver!
-for q in f:
-    for q in f:
-        for i in x:
-            for j in y:
-                if i > 0:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i - 1, j]))
-                if j > 0:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i, j - 1]))
-                if i + j > 1:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i - 1, j - 1]))
-                if i < 8:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i + 1, j]))
-                if j < 8:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i, j + 1]))
-                if i < 8 and j < 8:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i + 1, j + 1]))
-                if i > 0 and j < 8:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i - 1, j + 1]))
-                if i < 8 and j > 0:
-                    zsol[i][j] = np.delete(zsol[i][j], np.where(zsol[i][j] == z[i + 1, j - 1]))
-
-print(zsol)
+print(z)
+print(z)
