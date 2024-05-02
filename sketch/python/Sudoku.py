@@ -1,5 +1,5 @@
 import numpy as np
-from basis import find_xyz, find_symmetric_point, check_symmetry
+from basis import find_xyz, check_symmetry
 
 z = np.matrix([
     [3, 4, 1, 2],
@@ -8,24 +8,33 @@ z = np.matrix([
     [0, 0, 0, 0]
         ])
 
+possible_x = []
+possible_y = []
+for i in range(z.shape[0]):
+    for j in range(z.shape[1]):
+        possible_x.append([i, j + 1])
+        possible_y.append([i, j + 1])
+
 
 def Solve(lq):
-    points = np.empty((0, 2))
-    for index in np.ndindex(lq.shape):
-        if lq[index] != 0:
-            points = np.vstack(
-                    (points,
-                     np.array([index[0] - lq[index], index[1] - lq[index]]))
-                    )
+    has0 = True
+    while (has0):
+        points = np.empty((0, 2))
+        x = possible_x.copy()
+        y = possible_y.copy()
+        for index in np.ndindex(lq.shape):
+            if lq[index] != 0:
+                x.remove([index[0], lq[index]])
+                y.remove([index[1], lq[index]])
+                points = np.vstack(
+                        (points,
+                         np.array([index[0] - lq[index],
+                                   index[1] - lq[index]]))
+                        )
 
-    print(check_symmetry(points))
-    points = np.vstack((points, find_symmetric_point(points)))
-    print(check_symmetry(points))
-
-    points = np.vstack((points, find_symmetric_point(points)))
-    print(check_symmetry(points))
-    print(lq)
-    print(points)
+        print(check_symmetry(points))
+        print(lq)
+        print(points)
 
 
 Solve(z)

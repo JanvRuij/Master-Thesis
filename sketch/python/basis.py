@@ -4,7 +4,7 @@ import numpy as np
 def check_symmetry(points):
     symmetric = True
     for point in points:
-        reflection = - point
+        reflection = [point[0] - point[1], - point[1]]
         # Check if the reflection exists in the set of points
         if not any(np.all(reflection == p) for p in points):
             symmetric = False
