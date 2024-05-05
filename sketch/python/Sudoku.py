@@ -1,40 +1,51 @@
 import numpy as np
-from basis import find_xyz, check_symmetry
+import matplotlib.pyplot as plt
 
-z = np.matrix([
-    [3, 4, 1, 2],
-    [2, 1, 3, 4],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0]
-        ])
 
-possible_x = []
-possible_y = []
-for i in range(z.shape[0]):
-    for j in range(z.shape[1]):
-        possible_x.append([i, j + 1])
-        possible_y.append([i, j + 1])
+z = np.zeros((9, 9))
 
 
 def Solve(lq):
-    has0 = True
-    while (has0):
-        points = np.empty((0, 2))
-        x = possible_x.copy()
-        y = possible_y.copy()
-        for index in np.ndindex(lq.shape):
-            if lq[index] != 0:
-                x.remove([index[0], lq[index]])
-                y.remove([index[1], lq[index]])
-                points = np.vstack(
-                        (points,
-                         np.array([index[0] - lq[index],
-                                   index[1] - lq[index]]))
-                        )
+    size = lq.shape
+    possible_x = []
+    possible_y = []
+    for i in range(size[0]):
+        for j in range(size[1]):
+            possible_x.append([i, j + 1])
+            possible_y.append([i, j + 1])
 
-        print(check_symmetry(points))
-        print(lq)
-        print(points)
+    lq, solved = Sodoku_Solver(possible_x, possible_y, lq)
+    if solved:
+        return lq
+    else:
+        return "not solvable"
 
 
-Solve(z)
+def Sodoku_Solver(possible_x, possible_y, lq):
+    size = lq.shape
+    x = possible_x.copy()
+    y = possible_y.copy()
+    solved = False
+    step_taken = False
+    for i in range(size[0]):
+        for j in range(size[1]):
+            if lq[i, j] != 0:
+                x.remove([i, lq[i, j]])
+                y.remove([j, lq[i, j]])
+    for i in x:
+        for j in y:
+            if i[1] == j[1] and lq[i[0], j[0]] == 0:
+                lq[i[0], j[0]] = j[1]
+                step_taken = True
+                lq, solved = Sodoku_Solver(possible_x, possible_y, lq.copy())
+                if solved:
+                    return lq, solved
+
+    if not step_taken:
+        return lq, False
+
+    solved = np.any(lq != 0)
+    return lq, solved
+
+
+print(Solve(z))
