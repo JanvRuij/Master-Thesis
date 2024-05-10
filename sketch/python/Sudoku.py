@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
-z = np.zeros((50, 50))
+z = np.zeros((9, 9))
 
 
 
@@ -26,7 +26,7 @@ def LS_Solver(ls):
                     break
 
     count = 0
-    while (unsolved and count < 1000):
+    while (unsolved and count < 1):
         for i in range(size[0]):
             for j in range(size[1]):
                 for z in range(1, size[1] + 1):
@@ -37,18 +37,25 @@ def LS_Solver(ls):
                         test_step[i + 1:, j, z - 1] = 0 
                         # remove number z from row i items
                         test_step[i, j + 1:, z - 1] = 0
+                        square = size[0] * size[1]
+                        shadow = np.zeros((square, square))
+                        shadowT = np.zeros((square, square))
+                        n = size[0]
 
                         for q in range(size[0]):
-                            cost_matrix_col = - test_step[q, :]
-                            cost_matrix_row = - test_step[:, q]
-                            row_indices_col, col_indices_col = linear_sum_assignment(cost_matrix_col)
-                            row_indices_row, col_indices_row= linear_sum_assignment(cost_matrix_row)
-                            for row, col in zip(row_indices_row, col_indices_row):
-                                if cost_matrix_row[row, col] == 0:
-                                    smart_step = False
-                            for row, col in zip(row_indices_col, col_indices_col):
-                                if cost_matrix_col[row, col] == 0:
-                                    smart_step = False
+                            for b in range(size[0]):
+                                shadow[q*n + b, b*n:b*n + n] = -test_step[q, b]
+                                shadowT[b*n:b*n + n,q*n + b] = -test_step[b, q]
+
+                        row_indices, col_indices = linear_sum_assignment(shadow)
+                        for row, col in zip(row_indices, col_indices):
+                            if shadow[row, col] == 0:
+                                smart_step = False
+
+                        row_indices, col_indices = linear_sum_assignment(shadowT)
+                        for row, col in zip(row_indices, col_indices):
+                            if shadowT[row, col] == 0:
+                                smart_step = False
 
                         if smart_step:
                             all_steps = test_step
